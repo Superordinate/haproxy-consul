@@ -46,6 +46,7 @@ backend {{$localName}}_backend{{range $taskIndex, $taskJson := ls (printf "marat
 {{range ls "marathon"}}
 {{with $root := .}}{{with $app := parseJSON $root.Value}}
 {{range $index, $port := $app.ports}}
+{{if ne $port 0.}}
 listen {{$root.Key}}_{{$port}}
     mode tcp
     bind *:{{$port}}
@@ -53,6 +54,7 @@ listen {{$root.Key}}_{{$port}}
     server {{$task.id}} {{$task.host}}:{{index $task.ports $index}} 
     {{else}}{{end}}{{else}}
     # no tasks for {{$root.Key}}_{{$port}}{{end}}
+{{end}}
 {{else}}
 # {{$root.Key}} has no ports
 {{end}}{{else}}
